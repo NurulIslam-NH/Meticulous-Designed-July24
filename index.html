@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: Calm Neutral Harmony (Background: #F5F5F5, Text: #212121, Accent: #4DB6AC) -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling application designed to deconstruct the "Meticulous Design" article. The structure progresses from the core controversy to a comparative analysis of historical vs. modern movements, followed by the consequences (failed government) and long-term impact (erosion of trust). This non-linear, thematic approach is chosen over a simple article format to enhance user engagement and understanding by visually grouping related arguments and providing interactive comparisons (like the radar chart), which makes the author's complex critique more digestible and impactful. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: Key terms "Meticulous Design", "Mastermind". Goal: Inform/Define. Viz: Interactive cards (HTML/CSS/JS). Interaction: Hover/click to reveal definitions. Justification: Quickly explains the core jargon of the debate.
+        - Report Info: Comparison of July '24 vs '69, '71, '90 movements. Goal: Compare. Viz: Radar Chart (Chart.js/Canvas). Interaction: Hover tooltips. Justification: Provides a powerful, at-a-glance quantitative-like comparison of qualitative attributes (transparency, honesty), making the author's central argument visually compelling.
+        - Report Info: Failures of the interim government. Goal: Inform/Summarize. Viz: Icon-based grid layout (HTML/Tailwind). Interaction: Static display. Justification: Presents a list of failures in a digestible, dashboard-like format.
+        - Report Info: Long-term impact on public trust. Goal: Emphasize. Viz: Large typography pull-quotes. Interaction: Static. Justification: Highlights the author's concluding warnings for maximum impact. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <title data-lang-key="title">বিশ্লেষণ: মেটিকিউলাস ডিজাইনে সমস্যা</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', 'Hind Siliguri', sans-serif;
+            background-color: #F5F5F5;
+            color: #212121;
+        }
+        .font-bangla { font-family: 'Hind Siliguri', sans-serif; }
+        .font-english { font-family: 'Poppins', sans-serif; }
+        .accent-bg { background-color: #4DB6AC; }
+        .accent-text { color: #4DB6AC; }
+        .accent-border { border-color: #4DB6AC; }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            background-color: #FFFFFF;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .lang-btn {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .lang-btn.active {
+            background-color: #4DB6AC;
+            color: white;
+            border-color: #4DB6AC;
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="p-4 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold accent-text" data-lang-key="headerTitle">মেটিকিউলাস ডিজাইনের ব্যবচ্ছেদ</h1>
+            <div>
+                <button id="lang-bn" class="lang-btn active">বাংলা</button>
+                <button id="lang-en" class="lang-btn">English</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="intro" class="text-center mb-12 md:mb-16 section-fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4" data-lang-key="mainTitle">মেটিকিউলাস ডিজাইনে সমস্যা আছে</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto" data-lang-key="author">আখতারুজ্জামান আজাদ-এর প্রবন্ধের একটি ইন্টারেক্টিভ বিশ্লেষণ</p>
+        </section>
+
+        <section id="controversy" class="mb-12 md:mb-16 section-fade-in">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8" data-lang-key="controversyTitle">বিতর্কের কেন্দ্রবিন্দু: একটি শব্দবন্ধ</h3>
+            <p class="max-w-3xl mx-auto text-center text-gray-700 mb-10" data-lang-key="controversyIntro">
+                ডঃ মুহাম্মদ ইউনুসের ব্যবহৃত "মেটিকিউলাসলি ডিজাইন্‌ড" (Meticulously Designed) শব্দটি জুলাই ২০২৪-এর আন্দোলনকে ঘিরে ব্যাপক বিতর্কের জন্ম দেয়। এই শব্দবন্ধটি এবং এর সাথে সম্পর্কিত আরও কিছু শব্দ কীভাবে আলোচনাকে প্রভাবিত করেছে, তা নিচে তুলে ধরা হলো।
+            </p>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card p-6 text-center">
+                    <h4 class="text-xl font-bold mb-2 accent-text" data-lang-key="term1Title">মেটিকিউলাস ডিজাইন</h4>
+                    <p class="text-gray-600" data-lang-key="term1Desc">জুলাই আন্দোলনকে 'সযত্নে পরিকল্পিত' বলে বর্ণনা করা হয়, যা আন্দোলনটির স্বতঃস্ফূর্ততা নিয়ে প্রশ্ন তোলে এবং পূর্বপরিকল্পিত ষড়যন্ত্রের তত্ত্বে ইন্ধন জোগায়।</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <h4 class="text-xl font-bold mb-2 accent-text" data-lang-key="term2Title">মাস্টারমাইন্ড</h4>
+                    <p class="text-gray-600" data-lang-key="term2Desc">আন্দোলনের নেপথ্যের কারিগর হিসেবে নির্দিষ্ট ব্যক্তিকে উল্লেখ করা, যা এর গণচরিত্রকে ক্ষুণ্ণ করে এবং একটি গোষ্ঠীর চক্রান্ত হিসেবে প্রতিষ্ঠিত করার প্রমাণ দেয়।</p>
+                </div>
+                <div class="card p-6 text-center">
+                    <h4 class="text-xl font-bold mb-2 accent-text" data-lang-key="term3Title">রিসেট বাটন</h4>
+                    <p class="text-gray-600" data-lang-key="term3Desc">অগ্নিসংযোগের মতো বিতর্কিত ঘটনা প্রসঙ্গে এই শব্দের ব্যবহার পূর্ববর্তী ঘটনা মুছে ফেলার একটি চেষ্টা হিসেবে সমালোচিত হয়, যা দায় এড়ানোর ইঙ্গিত দেয়।</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="mb-12 md:mb-16 section-fade-in">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8" data-lang-key="comparisonTitle">ঐতিহাসিক আন্দোলন বনাম জুলাই আন্দোলন</h3>
+             <p class="max-w-3xl mx-auto text-center text-gray-700 mb-10" data-lang-key="comparisonIntro">
+                প্রবন্ধকার জুলাই '২৪-এর আন্দোলনকে বাংলাদেশের ঐতিহাসিক গণ-অভ্যুত্থানগুলোর সাথে তুলনা করে দেখিয়েছেন, কীভাবে স্বচ্ছতা, উদ্দেশ্য এবং নেতৃত্বের দিক থেকে এটি ভিন্ন ছিল। চার্টের মাধ্যমে এই পার্থক্যগুলো তুলে ধরা হলো।
+            </p>
+            <div class="chart-container max-w-3xl mx-auto h-80 md:h-96 lg:h-[500px]">
+                <canvas id="movementComparisonChart"></canvas>
+            </div>
+        </section>
+
+        <section id="deception" class="mb-12 md:mb-16 section-fade-in">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8" data-lang-key="deceptionTitle">প্রতারণার অভিযোগ</h3>
+            <p class="max-w-3xl mx-auto text-center text-gray-700 mb-10" data-lang-key="deceptionIntro">
+                প্রবন্ধে জুলাই আন্দোলনকে 'ছলচাতুরি ও প্রবঞ্চনায় পরিপূর্ণ' বলে অভিযোগ করা হয়েছে। এর পেছনে প্রধান যুক্তিগুলো হলো:
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="space-y-6">
+                    <div class="card p-6 flex items-start gap-4">
+                        <span class="text-2xl accent-text font-bold">১</span>
+                        <div>
+                            <h4 class="text-lg font-semibold" data-lang-key="deceptionPoint1Title">উদ্দেশ্যের গোপনীয়তা</h4>
+                            <p class="text-gray-600" data-lang-key="deceptionPoint1Desc">সরকার পতনের মূল উদ্দেশ্য গোপন রেখে কোটা সংস্কারের মতো একটি জনপ্রিয় দাবিকে মুখোশ হিসেবে ব্যবহার করা হয়েছিল।</p>
+                        </div>
+                    </div>
+                    <div class="card p-6 flex items-start gap-4">
+                        <span class="text-2xl accent-text font-bold">২</span>
+                        <div>
+                            <h4 class="text-lg font-semibold" data-lang-key="deceptionPoint2Title">নেতৃত্বের ধোঁয়াশা</h4>
+                            <p class="text-gray-600" data-lang-key="deceptionPoint2Desc">সমন্বয়কদের রাজনৈতিক পরিচয় (যেমন: শিবির বা ছাত্রলীগের সাথে পূর্ব সংশ্লিষ্টতা) গোপন রাখা হয়েছিল, যা আন্দোলনে অংশগ্রহণকারীদের সাথে এক ধরনের প্রতারণা।</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                     <div class="card p-6 flex items-start gap-4">
+                        <span class="text-2xl accent-text font-bold">৩</span>
+                        <div>
+                            <h4 class="text-lg font-semibold" data-lang-key="deceptionPoint3Title">লাশকে পুঁজি</h4>
+                            <p class="text-gray-600" data-lang-key="deceptionPoint3Desc">সাধারণ ছাত্র-জনতার মৃত্যুকে ব্যবহার করে পরিস্থিতিকে আরও উত্তপ্ত করে কার্যসিদ্ধি করার অভিযোগ আনা হয়েছে।</p>
+                        </div>
+                    </div>
+                     <div class="card p-6 flex items-start gap-4">
+                        <span class="text-2xl accent-text font-bold">৪</span>
+                        <div>
+                             <h4 class="text-lg font-semibold" data-lang-key="deceptionPoint4Title">ক্ষমতার ভাগাভাগি</h4>
+                            <p class="text-gray-600" data-lang-key="deceptionPoint4Desc">ঐতিহাসিক আন্দোলনের নেতারা ক্ষমতা গ্রহণ না করলেও, এই আন্দোলনের সমন্বয়করা দ্রুত সরকারে যোগ দেন, যা তাদের ক্ষমতালিপ্সার প্রমাণ দেয়।</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="aftermath" class="mb-12 md:mb-16 section-fade-in">
+            <h3 class="text-2xl md:text-3xl font-bold text-center mb-8" data-lang-key="aftermathTitle">পরিণতি: অন্তর্বর্তী সরকারের ব্যর্থতা</h3>
+            <p class="max-w-3xl mx-auto text-center text-gray-700 mb-10" data-lang-key="aftermathIntro">
+                প্রবন্ধকারের মতে, 'মেটিকিউলাস ডিজাইন'-এর ফলে গঠিত অন্তর্বর্তী সরকার বিভিন্ন ক্ষেত্রে চরম ব্যর্থতার পরিচয় দিয়েছে, যা দেশকে এক নতুন সংকটের দিকে ঠেলে দিয়েছে।
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">⚖️</div>
+                    <h4 class="font-semibold" data-lang-key="failure1">বিচার বিভাগের অধীনতা</h4>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">🛡️</div>
+                    <h4 class="font-semibold" data-lang-key="failure2">নিরাপত্তাহীন জনজীবন</h4>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">🇵🇰</div>
+                    <h4 class="font-semibold" data-lang-key="failure3">ইতিহাস বিকৃতির চেষ্টা</h4>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">📜</div>
+                    <h4 class="font-semibold" data-lang-key="failure4">নতুন কোটার প্রবর্তন</h4>
+                </div>
+                 <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">💸</div>
+                    <h4 class="font-semibold" data-lang-key="failure5">অর্থনৈতিক অব্যবস্থাপনা</h4>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">🤝</div>
+                    <h4 class="font-semibold" data-lang-key="failure6">দায়মুক্তির সংস্কৃতি</h4>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">🖤</div>
+                    <h4 class="font-semibold" data-lang-key="failure7">নিহতদের উপেক্ষা</h4>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-4xl mb-2">🎭</div>
+                    <h4 class="font-semibold" data-lang-key="failure8">ক্ষমতার লোভ</h4>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="conclusion" class="text-center bg-white p-8 md:p-12 rounded-lg shadow-lg section-fade-in">
+            <h3 class="text-2xl md:text-3xl font-bold mb-6" data-lang-key="conclusionTitle">শেষ কথা: বিশ্বাসের চিরস্থায়ী ক্ষতি</h3>
+            <blockquote class="text-lg md:text-xl italic text-gray-700 max-w-4xl mx-auto">
+                <p data-lang-key="conclusionQuote">"চব্বিশের মেটিকিউলাস ডিজাইন রাষ্ট্রের এমন চিরস্থায়ী একটি ক্ষতি করে গেল। রাজনৈতিক প্রশ্নে ভবিষ্যতে কেউ আর কাউকে বিশ্বাস করতে পারবে না। কেউ প্রকৃত অর্থেই অরাজনৈতিক ব্যানারে কোনো যৌক্তিক দাবি আদায় করতে চাইলেও মানুষ ভাববে— অরাজনৈতিক মুখোশে এরা নিশ্চয়ই কোনো রাজনৈতিক চক্রের, আপাত-নিরীহ সেজে এরা কাজ করছে কোনো-না-কোনো ডিজাইন বাস্তবায়নে।"</p>
+            </blockquote>
+             <p class="mt-6 text-gray-600 font-semibold" data-lang-key="conclusionAuthor">- আখতারুজ্জামান আজাদ</p>
+        </section>
+    </main>
+    
+    <footer class="text-center py-6 mt-8 border-t border-gray-200">
+        <p class="text-gray-500" data-lang-key="footerText">একটি ইন্টারেক্টিভ বিশ্লেষণ। মূল প্রবন্ধ: আখতারুজ্জামান আজাদ।</p>
+    </footer>
+
+<script>
+const contentData = {
+    bn: {
+        title: "বিশ্লেষণ: মেটিকিউলাস ডিজাইনে সমস্যা",
+        headerTitle: "মেটিকিউলাস ডিজাইনের ব্যবচ্ছেদ",
+        mainTitle: "মেটিকিউলাস ডিজাইনে সমস্যা আছে",
+        author: "আখতারুজ্জামান আজাদ-এর প্রবন্ধের একটি ইন্টারেক্টিভ বিশ্লেষণ",
+        controversyTitle: "বিতর্কের কেন্দ্রবিন্দু: একটি শব্দবন্ধ",
+        controversyIntro: "ডঃ মুহাম্মদ ইউনুসের ব্যবহৃত \"মেটিকিউলাসলি ডিজাইন্‌ড\" (Meticulously Designed) শব্দটি জুলাই ২০২৪-এর আন্দোলনকে ঘিরে ব্যাপক বিতর্কের জন্ম দেয়। এই শব্দবন্ধটি এবং এর সাথে সম্পর্কিত আরও কিছু শব্দ কীভাবে আলোচনাকে প্রভাবিত করেছে, তা নিচে তুলে ধরা হলো।",
+        term1Title: "মেটিকিউলাস ডিজাইন",
+        term1Desc: "জুলাই আন্দোলনকে 'সযত্নে পরিকল্পিত' বলে বর্ণনা করা হয়, যা আন্দোলনটির স্বতঃস্ফূর্ততা নিয়ে প্রশ্ন তোলে এবং পূর্বপরিকল্পিত ষড়যন্ত্রের তত্ত্বে ইন্ধন জোগায়।",
+        term2Title: "মাস্টারমাইন্ড",
+        term2Desc: "আন্দোলনের নেপথ্যের কারিগর হিসেবে নির্দিষ্ট ব্যক্তিকে উল্লেখ করা, যা এর গণচরিত্রকে ক্ষুণ্ণ করে এবং একটি গোষ্ঠীর চক্রান্ত হিসেবে প্রতিষ্ঠিত করার প্রমাণ দেয়।",
+        term3Title: "রিসেট বাটন",
+        term3Desc: "অগ্নিসংযোগের মতো বিতর্কিত ঘটনা প্রসঙ্গে এই শব্দের ব্যবহার পূর্ববর্তী ঘটনা মুছে ফেলার একটি চেষ্টা হিসেবে সমালোচিত হয়, যা দায় এড়ানোর ইঙ্গিত দেয়।",
+        comparisonTitle: "ঐতিহাসিক আন্দোলন বনাম জুলাই আন্দোলন",
+        comparisonIntro: "প্রবন্ধকার জুলাই '২৪-এর আন্দোলনকে বাংলাদেশের ঐতিহাসিক গণ-অভ্যুত্থানগুলোর সাথে তুলনা করে দেখিয়েছেন, কীভাবে স্বচ্ছতা, উদ্দেশ্য এবং নেতৃত্বের দিক থেকে এটি ভিন্ন ছিল। চার্টের মাধ্যমে এই পার্থক্যগুলো তুলে ধরা হলো।",
+        deceptionTitle: "প্রতারণার অভিযোগ",
+        deceptionIntro: "প্রবন্ধে জুলাই আন্দোলনকে 'ছলচাতুরি ও প্রবঞ্চনায় পরিপূর্ণ' বলে অভিযোগ করা হয়েছে। এর পেছনে প্রধান যুক্তিগুলো হলো:",
+        deceptionPoint1Title: "উদ্দেশ্যের গোপনীয়তা",
+        deceptionPoint1Desc: "সরকার পতনের মূল উদ্দেশ্য গোপন রেখে কোটা সংস্কারের মতো একটি জনপ্রিয় দাবিকে মুখোশ হিসেবে ব্যবহার করা হয়েছিল।",
+        deceptionPoint2Title: "নেতৃত্বের ধোঁয়াশা",
+        deceptionPoint2Desc: "সমন্বয়কদের রাজনৈতিক পরিচয় (যেমন: শিবির বা ছাত্রলীগের সাথে পূর্ব সংশ্লিষ্টতা) গোপন রাখা হয়েছিল, যা আন্দোলনে অংশগ্রহণকারীদের সাথে এক ধরনের প্রতারণা।",
+        deceptionPoint3Title: "লাশকে পুঁজি",
+        deceptionPoint3Desc: "সাধারণ ছাত্র-জনতার মৃত্যুকে ব্যবহার করে পরিস্থিতিকে আরও উত্তপ্ত করে কার্যসিদ্ধি করার অভিযোগ আনা হয়েছে।",
+        deceptionPoint4Title: "ক্ষমতার ভাগাভাগি",
+        deceptionPoint4Desc: "ঐতিহাসিক আন্দোলনের নেতারা ক্ষমতা গ্রহণ না করলেও, এই আন্দোলনের সমন্বয়করা দ্রুত সরকারে যোগ দেন, যা তাদের ক্ষমতালিপ্সার প্রমাণ দেয়।",
+        aftermathTitle: "পরিণতি: অন্তর্বর্তী সরকারের ব্যর্থতা",
+        aftermathIntro: "প্রবন্ধকারের মতে, 'মেটিকিউলাস ডিজাইন'-এর ফলে গঠিত অন্তর্বর্তী সরকার বিভিন্ন ক্ষেত্রে চরম ব্যর্থতার পরিচয় দিয়েছে, যা দেশকে এক নতুন সংকটের দিকে ঠেলে দিয়েছে।",
+        failure1: "বিচার বিভাগের অধীনতা",
+        failure2: "নিরাপত্তাহীন জনজীবন",
+        failure3: "ইতিহাস বিকৃতির চেষ্টা",
+        failure4: "নতুন কোটার প্রবর্তন",
+        failure5: "অর্থনৈতিক অব্যবস্থাপনা",
+        failure6: "দায়মুক্তির সংস্কৃতি",
+        failure7: "নিহতদের উপেক্ষা",
+        failure8: "ক্ষমতার লোভ",
+        conclusionTitle: "শেষ কথা: বিশ্বাসের চিরস্থায়ী ক্ষতি",
+        conclusionQuote: "\"চব্বিশের মেটিকিউলাস ডিজাইন রাষ্ট্রের এমন চিরস্থায়ী একটি ক্ষতি করে গেল। রাজনৈতিক প্রশ্নে ভবিষ্যতে কেউ আর কাউকে বিশ্বাস করতে পারবে না। কেউ প্রকৃত অর্থেই অরাজনৈতিক ব্যানারে কোনো যৌক্তিক দাবি আদায় করতে চাইলেও মানুষ ভাববে— অরাজনৈতিক মুখোশে এরা নিশ্চয়ই কোনো রাজনৈতিক চক্রের, আপাত-নিরীহ সেজে এরা কাজ করছে কোনো-না-কোনো ডিজাইন বাস্তবায়নে।\"",
+        conclusionAuthor: "- আখতারুজ্জামান আজাদ",
+        footerText: "একটি ইন্টারেক্টিভ বিশ্লেষণ। মূল প্রবন্ধ: আখতারুজ্জামান আজাদ।",
+        chartLabels: ['স্বচ্ছতা', 'প্রকাশ্য উদ্দেশ্য', 'প্রকাশ্য নেতৃত্ব', 'গণ অংশগ্রহণ', 'নৈতিক ভিত্তি', 'ক্ষমতার লোভহীনতা'],
+        chartDataset1Label: 'ঐতিহাসিক আন্দোলন (\'৬৯, \'৭১, \'৯০)',
+        chartDataset2Label: 'জুলাই আন্দোলন \'২৪',
+    },
+    en: {
+        title: "Analysis: The Problem with Meticulous Design",
+        headerTitle: "Deconstructing Meticulous Design",
+        mainTitle: "The Problem with Meticulous Design",
+        author: "An Interactive Analysis of the article by Akhtaruzzaman Azad",
+        controversyTitle: "The Core of the Controversy: A Phrase",
+        controversyIntro: "The term \"Meticulously Designed\", used by Dr. Muhammad Yunus, sparked widespread controversy surrounding the July 2024 movement. Here's how this phrase and related terms shaped the discourse.",
+        term1Title: "Meticulous Design",
+        term1Desc: "Describing the July movement as 'carefully planned' questioned its spontaneity and fueled theories of a preconceived conspiracy.",
+        term2Title: "Mastermind",
+        term2Desc: "Identifying specific individuals as the architects behind the movement undermined its popular character, framing it as a group's conspiracy.",
+        term3Title: "Reset Button",
+        term3Desc: "Using this term for controversial events like arsons was criticized as an attempt to erase past events, suggesting an evasion of responsibility.",
+        comparisonTitle: "Historic vs. July Movement",
+        comparisonIntro: "The author contrasts the July '24 movement with Bangladesh's historic mass uprisings, showing differences in transparency, objectives, and leadership. The chart below visualizes these differences.",
+        deceptionTitle: "Allegations of Deception",
+        deceptionIntro: "The article alleges the July movement was 'full of deceit and trickery'. The main arguments behind this are:",
+        deceptionPoint1Title: "Concealed Objective",
+        deceptionPoint1Desc: "The primary goal of ousting the government was hidden behind the popular demand for quota reform, which was used as a facade.",
+        deceptionPoint2Title: "Opaque Leadership",
+        deceptionPoint2Desc: "The political identities of the coordinators (e.g., past affiliations with Shibir or Chhatra League) were kept secret, which was a form of deception towards the participants.",
+        deceptionPoint3Title: "Capitalizing on Deaths",
+        deceptionPoint3Desc: "It's alleged that the deaths of ordinary students and people were used to escalate the situation to achieve the ultimate goal.",
+        deceptionPoint4Title: "Power Sharing",
+        deceptionPoint4Desc: "Unlike leaders of historical movements, the coordinators of this movement quickly joined the government, proving their hunger for power.",
+        aftermathTitle: "The Aftermath: A Failed Government",
+        aftermathIntro: "According to the author, the interim government formed as a result of the 'Meticulous Design' has failed on multiple fronts, pushing the country into a new crisis.",
+        failure1: "Subjugated Judiciary",
+        failure2: "Insecure Public Life",
+        failure3: "Attempt to Distort History",
+        failure4: "Introduction of New Quotas",
+        failure5: "Economic Mismanagement",
+        failure6: "Culture of Impunity",
+        failure7: "Ignoring the Victims",
+        failure8: "Greed for Power",
+        conclusionTitle: "Conclusion: The Permanent Damage to Trust",
+        conclusionQuote: "\"The meticulous design of '24 inflicted a permanent damage upon the state. In the future, no one will trust anyone on political questions. Even if someone genuinely wants to achieve a logical demand under a non-political banner, people will think—they must be a political circle in a non-political guise, working to implement some design in the pretense of innocence.\"",
+        conclusionAuthor: "- Akhtaruzzaman Azad",
+        footerText: "An interactive analysis. Original article by Akhtaruzzaman Azad.",
+        chartLabels: ['Transparency', 'Open Objectives', 'Public Leadership', 'Mass Participation', 'Moral Grounding', 'Absence of Power Greed'],
+        chartDataset1Label: 'Historic Movements (\'69, \'71, \'90)',
+        chartDataset2Label: 'July Movement \'24',
+    }
+};
+
+let currentLang = 'bn';
+let chart;
+
+function renderContent(lang) {
+    document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.dataset.langKey;
+        if (contentData[lang][key]) {
+            el.innerHTML = contentData[lang][key];
+        }
+    });
+    document.documentElement.lang = lang;
+    document.body.className = lang === 'bn' ? 'font-bangla antialiased' : 'font-english antialiased';
+    
+    document.getElementById('lang-bn').classList.toggle('active', lang === 'bn');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    
+    updateChart(lang);
+}
+
+function updateChart(lang) {
+    const chartData = {
+        labels: contentData[lang].chartLabels,
+        datasets: [
+            {
+                label: contentData[lang].chartDataset1Label,
+                data: [9, 10, 10, 9, 10, 10], 
+                backgroundColor: 'rgba(77, 182, 172, 0.2)',
+                borderColor: 'rgba(77, 182, 172, 1)',
+                pointBackgroundColor: 'rgba(77, 182, 172, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(77, 182, 172, 1)'
+            },
+            {
+                label: contentData[lang].chartDataset2Label,
+                data: [2, 1, 2, 8, 3, 1],
+                backgroundColor: 'rgba(255, 112, 67, 0.2)',
+                borderColor: 'rgba(255, 112, 67, 1)',
+                pointBackgroundColor: 'rgba(255, 112, 67, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(255, 112, 67, 1)'
+            }
+        ]
+    };
+    
+    if (chart) {
+        chart.data.labels = chartData.labels;
+        chart.data.datasets[0].label = chartData.datasets[0].label;
+        chart.data.datasets[1].label = chartData.datasets[1].label;
+        chart.update();
+    } else {
+        const ctx = document.getElementById('movementComparisonChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'radar',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                         labels: {
+                            font: {
+                                size: 14,
+                                family: lang === 'bn' ? "'Hind Siliguri', sans-serif" : "'Poppins', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                         bodyFont: {
+                            family: lang === 'bn' ? "'Hind Siliguri', sans-serif" : "'Poppins', sans-serif"
+                        },
+                        titleFont: {
+                            family: lang === 'bn' ? "'Hind Siliguri', sans-serif" : "'Poppins', sans-serif"
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: '#e0e0e0'
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 12,
+                                family: lang === 'bn' ? "'Hind Siliguri', sans-serif" : "'Poppins', sans-serif"
+                            },
+                            color: '#333'
+                        },
+                        ticks: {
+                            backdropColor: 'rgba(255, 255, 255, 0.75)',
+                            stepSize: 2
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 10
+                    }
+                }
+            }
+        });
+    }
+}
+
+
+document.getElementById('lang-bn').addEventListener('click', () => {
+    currentLang = 'bn';
+    renderContent(currentLang);
+});
+
+document.getElementById('lang-en').addEventListener('click', () => {
+    currentLang = 'en';
+    renderContent(currentLang);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderContent(currentLang);
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section-fade-in').forEach(section => {
+        observer.observe(section);
+    });
+});
+
+</script>
+</body>
+</html>
